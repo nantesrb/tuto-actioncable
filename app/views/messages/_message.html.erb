@@ -1,0 +1,9 @@
+<div class="message">
+  <p>
+    <%= message.content %>
+  </p>
+  <div class="message-info">
+    <strong><%= message.user.name %></strong>
+    <%= distance_of_time_in_words(message.created_at, Time.now) %> ago
+  </div>
+</div>
