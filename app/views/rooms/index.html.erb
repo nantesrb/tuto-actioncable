@@ -1,0 +1,13 @@
+<h1>Rooms</h1>
+
+<hr>
+<%= link_to 'Create a room', new_room_path, class: 'btn btn-primary' %>
+<hr>
+
+<ul>
+  <% @rooms.each do |room| %>
+    <li>
+      <%= link_to room.name, room_path(room.id) %>
+    </li>
+  <% end %>
+</ul>

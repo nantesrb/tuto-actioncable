@@ -1,0 +1,17 @@
+<h1><%= @room.name.capitalize %></h1>
+
+<div id="messages" class="container">
+  <%= "No message in this room" if @room.messages.empty? %>
+  <%= render @room.messages %>
+</div>
+
+<div class="container">
+  <hr>
+  <%= simple_form_for [ @room, @new_message ] do |f| %>
+    <%= f.input :content, label: 'message', placeholder: "say something nice" %>
+    <%= f.submit "Send", class: "btn btn-success" %>
+  <% end %>
+</div>
+
+<hr>
+<%= link_to 'All rooms', rooms_path %>

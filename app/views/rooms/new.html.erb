@@ -1,0 +1,11 @@
+<div class="panel panel-success">
+  <div class="panel-heading">
+    New room
+  </div>
+  <div class="panel-body">
+    <%= simple_form_for @room do |f| %>
+      <%= f.input :name %>
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+</div>
