@@ -1,4 +1,4 @@
-# Tutoriel ActionCable
+# Tutoriel ActionCable - Instructions
 
 ## 1. Installer l'appli en local
 
