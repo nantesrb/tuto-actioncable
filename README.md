@@ -7,7 +7,7 @@
     $ cd tuto-actioncable
     ```
 
-  1.  Se mettre sur la branche `tuto-base`:
+1.  Se mettre sur la branche `tuto-base`:
     ```shell
     $ git checkout tuto-base
     ```
