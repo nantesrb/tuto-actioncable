@@ -170,7 +170,7 @@ Bob:
     ```
 
 1.  Gestion en javascript de l'envoi et de la réception des messages
-```coffeescript
+    ```coffeescript
     # app/assets/javascripts/channels/rooms.coffee
     App.rooms = App.cable.subscriptions.create {
         channel: "RoomsChannel",
