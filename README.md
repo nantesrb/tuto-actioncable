@@ -33,7 +33,7 @@ Bob:
   password: password
 ```
 
-A cette étape, il est nécessaire de recharger la page pour voir si de nouveaux messages sont arrivés... Pas très pratique ! Mettons en place ActionCable pour fluidifier tout ça...
+À cette étape, il est nécessaire de recharger la page pour voir si de nouveaux messages sont arrivés... Pas très pratique ! Mettons en place ActionCable pour fluidifier tout ça...
 
 ## B. Configuration de base
 1.  Ajout d'une route pour le `cable`
@@ -55,10 +55,87 @@ A cette étape, il est nécessaire de recharger la page pour voir si de nouveaux
     end
     ```
 
-## C. Configuration client
-TODO
+## C. Configuration serveur
+1.  Identification des utilisateurs connectés avec Devise
+    ```ruby
+    # app/channels/application_cable/connection.rb
+    module ApplicationCable
+      class Connection < ActionCable::Connection::Base
+        identified_by :current_user
 
-## D. Configuration serveur
+        def connect
+          self.current_user = find_verified_user
+          logger.add_tags 'ActionCable', current_user.email
+        end
+
+        protected
+
+        def find_verified_user # this checks whether a user is authenticated with devise
+          if verified_user = env['warden'].user
+            verified_user
+          else
+            reject_unauthorized_connection
+          end
+        end
+      end
+    end
+    ```
+
+1.  Définition des méthodes utilisées par le `channel` des `rooms`
+    ```ruby
+    # app/channels/rooms_channel.rb
+    class RoomsChannel < ApplicationCable::Channel
+      def subscribed
+        stream_from "rooms_#{params['room_id']}_channel"
+      end
+
+      def unsubscribed
+        # Any cleanup needed when channel is unsubscribed
+      end
+
+      def send_message(data)
+        current_user.messages.create!(
+          content: data['message'],
+          room_id: data['room_id']
+        )
+      end
+    end
+    ```
+
+1.  Création du `job` pour les messages envoyés
+    ```ruby
+    # app/jobs/message_broadcast_job.rb
+    class MessageBroadcastJob < ApplicationJob
+      queue_as :default
+
+      def perform(message)
+        ActionCable.server.broadcast "rooms_#{message.room.id}_channel",
+                                     message: render_message(message)
+      end
+
+      private
+
+        def render_message(message)
+          MessagesController.render(
+            partial: 'messages/message',
+            locals: { message: message }
+          )
+        end
+    end
+    ```
+
+1.  Appel du `job` à la creation d'un message
+    ```ruby
+    # app/models/message.rb
+    class Message < ApplicationRecord
+      belongs_to :user
+      belongs_to :room
+
+      after_create_commit { MessageBroadcastJob.perform_later(self) }
+    end
+    ```
+
+## D. Configuration client
 TODO
 
 ## E. Configuration pour la production (Heroku)
