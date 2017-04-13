@@ -47,10 +47,11 @@ A cette étape, il est nécessaire de recharger la page pour voir si de nouveaux
 
 1.  Ajout de l'url du server ActionCable pour le développement
     ```ruby
-    # config/routes.rb
-    Rails.application.routes.draw do
-      mount ActionCable.server => '/cable'
+    # config/environments/development.rb
+
+    Rails.application.configure do
       [...]
+      config.action_cable.url = "ws://localhost:3000/cable"
     end
     ```
 
