@@ -136,7 +136,64 @@ Bob:
     ```
 
 ## D. Configuration client
-TODO
+1.  Ajout de `data` identifiables par le javascript dans la vue du `message`
+    ```erb
+    <!-- app/views/messages/_message.html.erb -->
+    <div class="message" data-user-id="<%= message.user.id %>">
+      <p>
+        <%= message.content %>
+      </p>
+      <div class="message-info">
+        <strong><%= message.user.name %></strong>
+        <%= distance_of_time_in_words(message.created_at, Time.now) %> ago
+      </div>
+    </div>
+    ```
+
+1.  Ajout de `data` identifiables par le javascript dans la vue de la `room` et ajout du `remote` pour le formulaire (pour ne pas appeler une nouvelle route)
+    ```erb
+    <!-- app/views/rooms/show.html.erb -->
+    <h1><%= @room.name.capitalize %></h1>
+
+    <div id="messages" class="container" data-room-id="<%= @room.id %>">
+      <%= "No message in this room" if @room.messages.empty? %>
+      <%= render @room.messages %>
+    </div>
+
+    <div class="container">
+      <hr>
+      <%= simple_form_for [ @room, @new_message ], remote: true do |f| %>
+        <%= f.input :content, label: 'message', placeholder: "say something nice" %>
+        <%= f.submit "Send", class: "btn btn-success" %>
+      <% end %>
+    </div>
+    ```
+
+1.  Gestion en javascript de l'envoi et de la réception des messages
+```coffeescript
+    # app/assets/javascripts/channels/rooms.coffee
+    App.rooms = App.cable.subscriptions.create {
+        channel: "RoomsChannel",
+        room_id: $('#messages').data('room-id')
+      },
+
+      connected: ->
+
+      received: (data) ->
+        $('#messages').append(data.message)
+
+      send_message: (message, room_id) ->
+        @perform 'send_message', message: message, room_id: room_id
+
+      $('#new_message').submit (e) ->
+        $this = $(this)
+        textarea = $this.find('#message_content')
+        if $.trim(textarea.val()).length > 1
+          App.rooms.send_message textarea.val(), $('#messages').data('room-id')
+          textarea.val('')
+        e.preventDefault()
+        return false
+    ```
 
 ## E. Configuration pour la production (Heroku)
 TODO
