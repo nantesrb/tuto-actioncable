@@ -1,6 +1,6 @@
 # Tutoriel ActionCable - Instructions
 
-## 1. Installer l'appli en local
+## A. Installer l'appli en local
 
 1. Cloner l'application :
 ```shell
