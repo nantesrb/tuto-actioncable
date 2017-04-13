@@ -36,7 +36,23 @@ Bob:
 A cette étape, il est nécessaire de recharger la page pour voir si de nouveaux messages sont arrivés... Pas très pratique ! Mettons en place ActionCable pour fluidifier tout ça...
 
 ## B. Configuration de base
-TODO
+1.  Ajout d'une route pour le `cable`
+    ```ruby
+    # config/routes.rb
+    Rails.application.routes.draw do
+    mount ActionCable.server => '/cable'
+    [...]
+    end
+    ```
+
+1.  Ajout de l'url du server ActionCable pour le développement
+    ```ruby
+    # config/routes.rb
+    Rails.application.routes.draw do
+      mount ActionCable.server => '/cable'
+      [...]
+    end
+    ```
 
 ## C. Configuration client
 TODO
