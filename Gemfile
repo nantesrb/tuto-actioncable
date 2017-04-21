@@ -3,7 +3,7 @@ ruby '2.3.1'
 
 gem 'rails', '5.0.2'
 gem 'puma'
-gem 'pg'
+gem 'sqlite3'
 gem 'figaro'
 gem 'jbuilder', '~> 2.0'
 gem 'devise'
