@@ -3,13 +3,8 @@
 ## A. Installation
 1.  Cloner l'application :
     ```shell
-    $ git clone git@github.com:nantesrb/tuto-actioncable.git
+    $ git clone -b tuto-base git@github.com:nantesrb/tuto-actioncable.git
     $ cd tuto-actioncable
-    ```
-
-1.  Se mettre sur la branche `tuto-base`:
-    ```shell
-    $ git checkout tuto-base
     ```
 
 1.  Déployer la base de donnée:
