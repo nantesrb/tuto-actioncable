@@ -5,6 +5,8 @@ tmp/*
 *.swp
 .DS_Store
 public/assets
+.rbenv-gemsets
+db/*.sqlite3
 
 # Ignore application configuration
 /config/application.yml

@@ -7,3 +7,4 @@ Ceci est la solution du tutoriel. Les consignes du tutoriel se trouvent sur le `
 
 - Fonctionnement en production sur Heroku
 - Avoir un rendu différent lorsque le message est le sien.
+
