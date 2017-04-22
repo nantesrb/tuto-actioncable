@@ -7,7 +7,7 @@
     $ cd tuto-actioncable
     ```
 
-1.  Déployer la base de donnée:
+1.  Déployer la base de données :
     ```shell
     $ rails db:migrate db:seed
     ```
@@ -40,7 +40,7 @@ Bob:
     end
     ```
 
-1.  Ajout de l'url du server ActionCable pour le développement
+1.  Ajout de l'URL du server ActionCable pour le développement
     ```ruby
     # config/environments/development.rb
 
