@@ -104,7 +104,7 @@ Bob:
       queue_as :default
 
       def perform(message)
-        ActionCable.server.broadcast "rooms_#{message.room.id}_channel",
+        ActionCable.server.broadcast "rooms_#{message.room_id}_channel",
                                      message: render_message(message)
       end
 
