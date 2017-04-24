@@ -50,7 +50,7 @@ Bob:
     end
     ```
 
-## C. Configuration serveur
+## C. Configuration du backend
 1.  Identification des utilisateurs connectés avec Devise
     ```ruby
     # app/channels/application_cable/connection.rb
@@ -129,6 +129,14 @@ Bob:
     ```
 
 ## D. Configuration client
+1. Ajout du meta tag :
+    ```erb
+    <!-- app/views/layouts/application.html.erb -->
+    [...]
+    <%= csrf_meta_tags %>
+    [...]
+    ```
+
 1.  Ajout de `data` identifiables par le javascript dans la vue du `message`
     ```erb
     <!-- app/views/messages/_message.html.erb -->
