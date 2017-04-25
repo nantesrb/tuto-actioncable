@@ -7,7 +7,7 @@
 
 <div class="container">
   <hr>
-  <%= simple_form_for [ @room, @new_message ] do |f| %>
+  <%= simple_form_for [@room, @new_message] do |f| %>
     <%= f.input :content, label: 'message', placeholder: "say something nice" %>
     <%= f.submit "Send", class: "btn btn-success" %>
   <% end %>

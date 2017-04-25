@@ -7,6 +7,11 @@
     $ cd tuto-actioncable
     ```
 
+1.  Installation des gems :
+    ```shell
+    $ bundle install
+    ```
+
 1.  Déployer la base de données :
     ```shell
     $ rails db:migrate db:seed
@@ -31,12 +36,12 @@ Bob:
 À cette étape, il est nécessaire de recharger la page pour voir si de nouveaux messages sont arrivés... Pas très pratique ! Mettons en place ActionCable pour fluidifier tout ça...
 
 ## B. Configuration de base
-1.  Ajout d'une route pour le `cable`
+1.  Ajout de la route pour Action Cable
     ```ruby
     # config/routes.rb
     Rails.application.routes.draw do
-    mount ActionCable.server => '/cable'
-    [...]
+      mount ActionCable.server => '/cable'
+      [...]
     end
     ```
 
@@ -51,21 +56,25 @@ Bob:
     ```
 
 ## C. Configuration du backend
-1.  Identification des utilisateurs connectés avec Devise
+1.  Établissement de la connexion initiale avec le client.
+
     ```ruby
     # app/channels/application_cable/connection.rb
     module ApplicationCable
       class Connection < ActionCable::Connection::Base
+        # définit l'accesseur renvoyant l'utilisateur identifié
         identified_by :current_user
 
         def connect
           self.current_user = find_verified_user
+          # préfixe des logs propres à action cable
           logger.add_tags 'ActionCable', current_user.email
         end
 
         protected
 
-        def find_verified_user # this checks whether a user is authenticated with devise
+        def find_verified_user
+          # authentification via warden (devise)
           if verified_user = env['warden'].user
             verified_user
           else
@@ -76,18 +85,28 @@ Bob:
     end
     ```
 
-1.  Définition des méthodes utilisées par le `channel` des `rooms`
+1.  Génération du channel :
+    ```shell
+    $ rails g channel rooms
+    ```
+
+    Définition du `channel` des `rooms`
     ```ruby
     # app/channels/rooms_channel.rb
     class RoomsChannel < ApplicationCable::Channel
+      # surcharge
       def subscribed
+        # permet de gérer l'inscription du client au channel identifié
         stream_from "rooms_#{params['room_id']}_channel"
       end
 
+      # surcharge
       def unsubscribed
-        # Any cleanup needed when channel is unsubscribed
+        # gestion de la désinscription du channel
+        # (notification, nettoyage de données...)
       end
 
+      # definition de l'"action" send_message
       def send_message(data)
         current_user.messages.create!(
           content: data['message'],
@@ -97,25 +116,32 @@ Bob:
     end
     ```
 
-1.  Création du `job` pour les messages envoyés
+1.  Génération du job :
+    ```shell
+    $ rails g job message_broadcast
+    ```
+
+    Définition du `job` pour les messages envoyés
     ```ruby
     # app/jobs/message_broadcast_job.rb
     class MessageBroadcastJob < ApplicationJob
       queue_as :default
 
       def perform(message)
+        # broadcast vers le channel identifié
         ActionCable.server.broadcast "rooms_#{message.room_id}_channel",
                                      message: render_message(message)
       end
 
       private
 
-        def render_message(message)
-          MessagesController.render(
-            partial: 'messages/message',
-            locals: { message: message }
-          )
-        end
+      def render_message(message)
+        # rendu HTML du message
+        MessagesController.render(
+          partial: 'messages/message',
+          locals: { message: message }
+        )
+      end
     end
     ```
 
@@ -124,7 +150,14 @@ Bob:
     # app/models/message.rb
     class Message < ApplicationRecord
       [...]
-      after_create_commit { MessageBroadcastJob.perform_later(self) }
+
+      after_create_commit :broadcast
+
+      private
+
+      def broadcast
+        MessageBroadcastJob.perform_later(self)
+      end
     end
     ```
 
@@ -134,19 +167,20 @@ Bob:
     <!-- app/views/layouts/application.html.erb -->
     [...]
     <%= csrf_meta_tags %>
+    <%= action_cable_meta_tag %>
     [...]
     ```
 
 1.  Ajout de `data` identifiables par le javascript dans la vue du `message`
     ```erb
     <!-- app/views/messages/_message.html.erb -->
-    <div class="message" data-user-id="<%= message.user.id %>">
+    <div class="message" data-user-id="<%= message.user_id %>">
       <p>
         <%= message.content %>
       </p>
       <div class="message-info">
         <strong><%= message.user.name %></strong>
-        <%= distance_of_time_in_words(message.created_at, Time.now) %> ago
+        <%= l(message.created_at, format: "%H:%M - %d/%m") %>
       </div>
     </div>
     ```
@@ -157,13 +191,13 @@ Bob:
     <h1><%= @room.name.capitalize %></h1>
 
     <div id="messages" class="container" data-room-id="<%= @room.id %>">
-      <%= "No message in this room" if @room.messages.empty? %>
+      <%= "No message in this room" unless @room.messages.exists? %>
       <%= render @room.messages %>
     </div>
 
     <div class="container">
       <hr>
-      <%= simple_form_for [ @room, @new_message ], remote: true do |f| %>
+      <%= simple_form_for [@room, @new_message], remote: true do |f| %>
         <%= f.input :content, label: 'message', placeholder: "say something nice" %>
         <%= f.submit "Send", class: "btn btn-success" %>
       <% end %>
@@ -179,8 +213,13 @@ Bob:
       },
 
       connected: ->
+        # Called when the subscription is ready for use on the server
+
+      disconnected: ->
+        # Called when the subscription has been terminated by the server
 
       received: (data) ->
+        # Called when there's incoming data on the websocket for this channel
         $('#messages').append(data.message)
 
       send_message: (message, room_id) ->
@@ -193,7 +232,7 @@ Bob:
           App.rooms.send_message textarea.val(), $('#messages').data('room-id')
           textarea.val('')
         e.preventDefault()
-        return false
+        false
     ```
 
 ## E. Configuration pour la production (Heroku)
