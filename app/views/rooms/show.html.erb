@@ -1,13 +1,13 @@
 <h1><%= @room.name.capitalize %></h1>
 
-<div id="messages" class="container">
-  <%= "No message in this room" if @room.messages.empty? %>
+<div id="messages" class="container" data-room-id="<%= @room.id %>">
+  <%= "No message in this room" unless @room.messages.exists? %>
   <%= render @room.messages %>
 </div>
 
 <div class="container">
   <hr>
-  <%= simple_form_for [@room, @new_message] do |f| %>
+  <%= simple_form_for [@room, @new_message], remote: true do |f| %>
     <%= f.input :content, label: 'message', placeholder: "say something nice" %>
     <%= f.submit "Send", class: "btn btn-success" %>
   <% end %>

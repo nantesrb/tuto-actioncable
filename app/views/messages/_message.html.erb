@@ -1,9 +1,9 @@
-<div class="message">
+<div class="message" data-user-id="<%= message.user_id %>">
   <p>
     <%= message.content %>
   </p>
   <div class="message-info">
     <strong><%= message.user.name %></strong>
-    <%= distance_of_time_in_words(message.created_at, Time.now) %> ago
+    <%= l(message.created_at, format: "%H:%M - %d/%m") %>
   </div>
 </div>
