@@ -237,4 +237,5 @@ Bob:
 
 ## E. Pour aller plus loin
 - Identifier l'auteur d'un message pour appliquer un style CSS différent aux messages envoyés (message à droite par exemple)
+- Gérer la déconnexion
 - Afficher les utilisateurs connectés dans une `room`
