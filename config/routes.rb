@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
+<<<<<<< HEAD
   
+=======
+>>>>>>> tuto-base
   devise_for :users
   root to: 'rooms#index'
 

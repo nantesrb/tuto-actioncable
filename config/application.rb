@@ -19,7 +19,10 @@ Bundler.require(*Rails.groups)
 module TutoActioncable
   class Application < Rails::Application
     config.generators do |generate|
+<<<<<<< HEAD
       generate.assets false
+=======
+>>>>>>> tuto-base
       generate.helper false
     end
 
