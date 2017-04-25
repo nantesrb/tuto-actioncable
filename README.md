@@ -234,8 +234,13 @@ Bob:
         e.preventDefault()
         false
     ```
+## E. Solution complète
+Vous pouvez retrouver la solution complète sur la branche [tuto-solution](https://github.com/nantesrb/tuto-actioncable/tree/tuto-solution):
+```shell
+$ git checkout tuto-solution
+```
 
-## E. Pour aller plus loin
+## F. Pour aller plus loin
 - Identifier l'auteur d'un message pour appliquer un style CSS différent aux messages envoyés (message à droite par exemple)
 - Gérer la déconnexion
 - Afficher les utilisateurs connectés dans une `room`
