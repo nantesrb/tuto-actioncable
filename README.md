@@ -22,7 +22,7 @@
     $ rails server
     ```
 
-Vous voilà avec une application de t'chat de base. Il existe des seeds pour utiliser l'application avec les utilisateurs Alice et Bob :
+Vous voilà avec une [application de t'chat de base](http://localhost:3000). Il existe des seeds pour utiliser l'application avec les utilisateurs Alice et Bob :
 ```
 Alice:
   email:    alice@example.com
