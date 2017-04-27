@@ -48,11 +48,24 @@ Bob:
 1.  Ajout de l'URL du server ActionCable pour le développement
     ```ruby
     # config/environments/development.rb
-
     Rails.application.configure do
       [...]
       config.action_cable.url = "ws://localhost:3000/cable"
     end
+    ```
+
+1.  Configuration du processus utilisé par ActionCable
+    ```ruby
+    # config/cable.yml
+    development:
+      adapter: async
+
+    test:
+      adapter: async
+
+    production:
+      adapter: redis
+      url: redis://localhost:6379/1 # URL pour Heroku
     ```
 
 ## C. Configuration du backend
